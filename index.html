@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CBLOW — Simulador de Rodízio</title>
+<style>
+:root{--bg:#0c0c0b;--panel:#151514;--panel2:#1b1a18;--line:#2c2a27;--text:#f0efed;--muted:#b9b6b1;--orange:#d99a61;--orange2:#8d5b35;--green:#91d4a8;--red:#e99a9a;--gold:#f2c27f}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;line-height:1.5}
+.topbar{height:62px;border-bottom:1px solid #242321;display:flex;align-items:center;padding:0 24px;gap:34px;position:sticky;top:0;background:#10100f;z-index:5}.brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:22px;letter-spacing:.02em;white-space:nowrap}.crest{width:27px;height:30px;border:1px solid var(--orange);clip-path:polygon(50% 0,95% 14%,86% 72%,50% 100%,14% 72%,5% 14%);display:grid;place-items:center;color:var(--orange);font-size:10px;font-weight:900}.nav{display:flex;gap:25px;align-items:center;overflow:auto;white-space:nowrap;font-weight:800;font-size:13px;color:#b9b8b5}.nav span{padding:23px 0 19px}.nav .active{color:white;border-bottom:2px solid var(--orange)}
+.wrap{max-width:1280px;margin:auto;padding:42px 24px 70px}.hero{display:grid;grid-template-columns:300px 1fr;gap:40px;align-items:center;margin:8px 0 38px}.section-no{border-left:2px solid var(--orange2);padding:4px 0 4px 20px}.number{font-size:84px;line-height:.9;font-weight:300;color:transparent;-webkit-text-stroke:1.5px var(--orange2);letter-spacing:-.06em}.eyebrow{font-size:11px;letter-spacing:.28em;color:var(--orange);font-weight:900;margin-top:15px;text-transform:uppercase}.section-no h1{font-size:27px;line-height:1.12;text-transform:uppercase;margin:8px 0 0;letter-spacing:-.025em}.intro{color:var(--muted);font-size:16px;max-width:790px}.intro strong{color:var(--text)}.label{font-size:11px;letter-spacing:.17em;text-transform:uppercase;color:var(--orange);font-weight:900;margin-bottom:9px}.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:12px}.card{background:var(--panel);border:1px solid var(--line);padding:19px 20px;min-width:0}.span4{grid-column:span 4}.span5{grid-column:span 5}.span7{grid-column:span 7}.span8{grid-column:span 8}.full{grid-column:1/-1}.card h2{font-size:18px;margin:0 0 10px;text-transform:uppercase;letter-spacing:-.02em}.muted{color:var(--muted)}.small{font-size:12px}.rule{border-left:3px solid var(--orange);background:#1b1916;padding:15px 17px;font-size:17px;font-weight:700}.rule em{font-style:normal;color:var(--orange)}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}.step{border:1px solid var(--line);background:#111110;padding:14px}.step .n{color:var(--orange);font-size:12px;font-weight:900;letter-spacing:.1em}.step strong{display:block;margin:7px 0 4px}.step p{margin:0;color:var(--muted);font-size:13px}
+label{display:block;font-size:12px;font-weight:800;color:#d8d5d0;margin:12px 0 6px}input,select{width:100%;background:#0d0d0c;border:1px solid #47423c;border-radius:0;color:var(--text);padding:11px 10px;font:inherit;font-size:14px}input:focus,select:focus{outline:1px solid var(--orange)}input::placeholder{color:#8b8176;opacity:1;font-style:italic}select option.unplayed-option{color:#f0bc86;font-weight:700}.roster{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:12px}.player{display:flex;align-items:center;gap:9px;background:#10100f;border:1px solid var(--line);padding:9px;font-size:13px;min-width:0}.player input{width:16px;height:16px;padding:0;accent-color:var(--orange);flex:0 0 auto}.player span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.player.done{border-color:#526c56}.player.done span:after{content:" · JOGOU";font-size:9px;color:var(--green);font-weight:900}.player.pc{border-color:var(--orange2)}.tag{font-size:9px;color:var(--orange);font-weight:900;margin-left:auto;white-space:nowrap}
+.lineup{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.slot{border:1px solid var(--line);padding:10px;background:#10100f}.slot label{margin:0}.slot select{margin-top:7px}.stats{display:flex;gap:8px;margin:13px 0}.stat{flex:1;min-width:0;background:#10100f;border:1px solid var(--line);padding:12px}.stat small{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em}.stat strong{display:block;font-size:27px;color:var(--orange);line-height:1.2;margin-top:5px}.notice{padding:12px 13px;margin-top:12px;border:1px solid var(--line);font-size:13px;font-weight:700}.good{border-color:#3f6547;background:#151f16;color:#bfe5c7}.warn{border-color:#75562f;background:#211a13;color:#f2d1a5}.bad{border-color:#7b4141;background:#251414;color:#f2baba}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.btn{cursor:pointer;padding:11px 14px;font-size:12px;letter-spacing:.05em;text-transform:uppercase;font-weight:900;border:1px solid var(--orange2);background:var(--orange);color:#17110b}.btn.secondary{background:transparent;color:var(--text);border-color:#514a41}.btn.danger{background:transparent;color:#e7aaaa;border-color:#784747}.btn:disabled{opacity:.4;cursor:not-allowed}.history{display:grid;gap:7px;margin-top:12px}.match{display:flex;align-items:flex-start;gap:12px;padding:11px;border:1px solid var(--line);background:#10100f;font-size:13px}.badge{color:var(--orange);border:1px solid var(--orange2);padding:3px 7px;font-size:10px;font-weight:900;white-space:nowrap}.match p{margin:0}.foot{color:#85817a;font-size:11px;margin-top:14px}.formula{background:#10100f;border:1px solid var(--line);padding:13px;overflow-wrap:anywhere}.formula code{color:#f0bc86;font-size:14px}.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}.mathrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}.mathrow:last-child{border-bottom:0}.mathrow strong{font-size:19px;color:var(--orange)}.hidden{display:none!important}
+@media(max-width:900px){.nav{gap:15px}.hero{grid-template-columns:230px 1fr;gap:24px}.number{font-size:70px}.section-no h1{font-size:23px}.span4,.span5,.span7,.span8{grid-column:span 6}}
+@media(max-width:650px){.topbar{padding:0 12px;gap:18px}.brand{font-size:18px}.nav{gap:15px;font-size:11px}.wrap{padding:25px 12px 45px}.hero{grid-template-columns:1fr;gap:15px}.number{font-size:60px}.section-no h1{font-size:23px}.span4,.span5,.span7,.span8,.full{grid-column:1/-1}.steps{grid-template-columns:1fr}.lineup,.roster,.two-col{grid-template-columns:1fr}}
+@media print{.topbar,.btns{display:none}.wrap{padding:10px}.card{break-inside:avoid}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="crest">CB</div> CBLOW</div>
+  <nav class="nav"><span>PRESIDENTES</span><span>TIMES</span><span>JOGADORES</span><span>PARTIDAS</span><span>TABELA</span><span>ESTATÍSTICAS</span><span>CARTAS</span><span>CONTEÚDO</span><span class="active">REGRAS</span></nav>
+</header>
+<main class="wrap">
+  <section class="hero">
+    <div class="section-no"><div class="number">02</div><div class="eyebrow">ARTIGO 2 · RODÍZIO</div><h1>Rodízio de elenco e escalação</h1></div>
+    <div class="intro">Uma regra simples para garantir que <strong>todo mundo jogue</strong>, sem obrigar o time a trocar quatro jogadores toda partida. Esta versão inclui o simulador e os detalhes técnicos da lógica.</div>
+  </section>
+  <div class="grid">
+    <section class="card full">
+      <div class="label">Regra principal</div>
+      <div class="rule">A escalação titular só pode ser repetida depois que <em>todos os jogadores inscritos</em> tiverem jogado pelo menos uma partida no ciclo atual.</div>
+      <div class="steps">
+        <div class="step"><span class="n">01 / ESCALAR</span><strong>5 jogadores por partida</strong><p>O Pé de Chumbo é obrigatório e conta como uma das cinco vagas.</p></div>
+        <div class="step"><span class="n">02 / RODAR</span><strong>Troque quantos quiser</strong><p>Pode trocar 1, 2, 3 ou 4 jogadores. Também pode manter jogadores da partida anterior.</p></div>
+        <div class="step"><span class="n">03 / REPETIR</span><strong>Todos jogaram? Liberou.</strong><p>Quando todos tiverem participado, uma escalação completa já usada pode voltar. A repetição inicia um novo ciclo de controle.</p></div>
+      </div>
+    </section>
+
+    <section class="card span4">
+      <div class="label">01 / Configuração</div><h2>Monte o elenco</h2>
+      <p class="muted small">Escolha 8 ou 9 jogadores. Edite os nomes; o primeiro é o Pé de Chumbo.</p>
+      <label for="teamSize">Tamanho da equipe</label><select id="teamSize"><option value="8">8 jogadores</option><option value="9">9 jogadores</option></select>
+      <div id="nameFields"></div>
+      <div class="foot">Os nomes ficam neste navegador; não são enviados a nenhum servidor.</div>
+    </section>
+
+    <section class="card span8">
+      <div class="label">02 / Próxima partida</div><h2>Monte a escalação</h2>
+      <p class="muted small">Escolha o Pé de Chumbo e mais quatro jogadores diferentes.</p>
+      <p class="small" style="color:var(--orange);margin:0 0 10px">★ PRIORIDADE = jogador que ainda não participou deste ciclo.</p>
+      <div id="lineupFields" class="lineup"></div>
+      <div id="validation" class="notice warn">Escolha os cinco jogadores para validar a escalação.</div>
+      <div id="lineupCycleNotice" class="notice warn" style="font-size:15px;padding:15px 16px;font-weight:900">O ciclo ainda não terminou.</div>
+      <div class="btns"><button class="btn" id="registerBtn">Registrar partida</button><button class="btn secondary" id="clearLineupBtn">Limpar escalação</button></div>
+    </section>
+
+    <section class="card span4">
+      <div class="label">03 / Status do ciclo</div><h2>Participação</h2>
+      <div class="stats"><div class="stat"><small>Já jogaram</small><strong id="playedCount">0/7</strong></div><div class="stat"><small>Faltam jogar</small><strong id="remainingCount">7</strong></div></div>
+      <p class="muted small" id="cycleText">O Pé de Chumbo não entra na contagem, pois joga sempre.</p>
+      <div id="remainingList" class="roster"></div>
+      <div id="cycleNotice" class="notice warn">O ciclo ainda não terminou.</div>
+    </section>
+
+    <section class="card span8">
+      <div class="label">04 / Registro</div><h2>Histórico do ciclo atual</h2>
+      <p class="muted small">A mesma escalação completa não pode aparecer duas vezes antes de todos participarem do ciclo.</p>
+      <div id="history" class="history"><p class="muted">Nenhuma partida registrada.</p></div>
+      <div class="btns"><button class="btn secondary" id="newCycleBtn">Iniciar novo ciclo</button><button class="btn danger" id="resetBtn">Zerar tudo</button></div>
+      <div class="foot">Use “Iniciar novo ciclo” apenas com autorização da organização. Zerar tudo apaga o histórico desta sessão.</div>
+    </section>
+
+    <section class="card full">
+      <div class="label">05 / Modo nerd · lógica formal</div><h2>Como o sistema decide?</h2>
+      <div class="two-col">
+        <div>
+          <p class="muted">Definições</p>
+          <div class="formula"><code>N</code> = total de inscritos<br><code>X</code> = jogadores que ainda não atuaram no ciclo<br><code>R</code> = escalação de 5 jogadores, incluindo o Pé de Chumbo</div>
+          <p class="muted small">O Pé de Chumbo é fixo. Portanto, cada escalação é definida escolhendo 4 jogadores entre os outros N − 1.</p>
+          <div class="formula"><code>Total de escalações possíveis = C(N − 1, 4)</code><br><br><code>C(N − 1, 4) = (N − 1)! / [4! × (N − 5)!]</code></div>
+        </div>
+        <div>
+          <p class="muted">Resultados por tamanho de elenco</p>
+          <div class="mathrow"><span>8 inscritos · escolher 4 entre 7</span><strong>35 times</strong></div>
+          <div class="mathrow"><span>9 inscritos · escolher 4 entre 8</span><strong>70 times</strong></div>
+          <p class="muted small">Esses valores são o total de escalações distintas possíveis, não a quantidade obrigatória de partidas por ciclo.</p>
+          <div class="formula"><code>Repetição permitida ⇔ X = 0</code><br><br>Se <code>X &gt; 0</code>, uma escalação já usada no ciclo não pode ser repetida. Escalações novas continuam permitidas, mesmo que mantenham 1, 2, 3 ou 4 jogadores anteriores.</div>
+        </div>
+      </div>
+      <div class="notice warn">Importante: a regra controla a repetição da escalação completa, não impede que jogadores individuais atuem em partidas seguidas.</div>
+    </section>
+    <section class="card full">
+      <div class="label">Texto sugerido para o regulamento</div><h2>Artigo 2 — Rodízio de elenco e escalação</h2>
+      <p>O presidente da equipe deverá realizar o rodízio do elenco, garantindo que todos os jogadores inscritos participem de pelo menos uma partida antes da repetição de uma escalação completa já utilizada no ciclo vigente. É permitida a manutenção de qualquer quantidade de jogadores da partida anterior, bem como a entrada de um ou mais jogadores por vez, desde que a escalação tenha cinco jogadores e inclua obrigatoriamente o Pé de Chumbo. Quando todos os jogadores inscritos tiverem participado do ciclo, uma escalação completa já utilizada poderá ser repetida. Essa repetição encerra o ciclo anterior e inicia um novo ciclo de controle.</p>
+    </section>
+  </div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+let size=8, names=["","","","","","","","",""];
+let played=new Set(), lineups=[], cycle=1, currentSlots=[0,1,2,3,4];
+const count=()=>size-1;
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const key=ids=>ids.slice().sort((a,b)=>a-b).join(",");
+function renderNames(){
+ const host=$("nameFields");host.innerHTML="";
+ for(let i=0;i<size;i++){
+  const label=document.createElement("label");label.textContent=i===0?"Jogador obrigatório · Pé de Chumbo":"Jogador "+(i+1);
+  const input=document.createElement("input");input.value=names[i]||"";input.placeholder=i===0?"Pé de Chumbo":"Jogador "+String.fromCharCode(64+i);input.maxLength=30;
+  input.addEventListener("input",()=>{names[i]=input.value;renderLineup();renderProgress();renderHistory();});
+  host.append(label,input);
+ }
+}
+function renderLineup(){
+ const host=$("lineupFields");host.innerHTML="";
+ if(currentSlots.length!==5)currentSlots=[0,1,2,3,4];
+ for(let i=0;i<5;i++){
+  const div=document.createElement("div");div.className="slot";
+  const label=document.createElement("label");label.textContent=i===0?"1 · Pé de Chumbo":"Jogador "+(i+1);
+  const sel=document.createElement("select");
+  const selectedElsewhere=new Set(currentSlots.filter((id,slot)=>slot!==i&&id>=0));
+  const available=names.slice(0,size).map((n,j)=>({n,j})).filter(({j})=>!selectedElsewhere.has(j)||j===currentSlots[i]);
+  sel.innerHTML=(i===0?[]:[`<option value="-1" ${currentSlots[i]===-1?"selected":""}>— Selecione um jogador —</option>`]).concat(available.map(({n,j})=>{
+    const display=(n.trim()|| (j===0?"Pé de Chumbo":"Jogador "+String.fromCharCode(64+j)));
+    const isUnplayed=j!==0&&!played.has(j);
+    return `<option value="${j}" ${j===currentSlots[i]?"selected":""} class="${isUnplayed?"unplayed-option":""}">${isUnplayed?"★ PRIORIDADE · ":""}${esc(display)}</option>`;
+  })).join("");
+  if(i===0){sel.value="0";sel.disabled=true;}
+  sel.addEventListener("change",()=>{currentSlots[i]=Number(sel.value);renderLineup();});
+  div.append(label,sel);host.append(div);
+ }
+ validate();
+}
+function selected(){return currentSlots.map(Number)}
+function validate(){
+ const ids=selected(),valid=ids.length===5&&ids[0]===0&&new Set(ids).size===5&&ids.every(i=>i>=0&&i<size);
+ const isRepeat=lineups.some(m=>key(m.ids)===key(ids));
+ const box=$("validation"),btn=$("registerBtn");
+ if(!valid){box.className="notice warn";box.textContent="Escolha 5 jogadores diferentes e mantenha o Pé de Chumbo.";btn.disabled=true;return;}
+ if(isRepeat&&played.size<count()){box.className="notice bad";box.textContent="Escalação repetida antes de todos jogarem. Troque pelo menos um jogador e continue o rodízio.";btn.disabled=true;return;}
+ box.className="notice good";box.textContent=isRepeat?"Escalação repetida, mas liberada: todos já jogaram. Ao registrar, começa um novo ciclo.":"Escalação válida. Você pode manter jogadores anteriores; só não repita o time completo antes de todos jogarem.";btn.disabled=false;
+}
+function renderProgress(){
+ const missing=names.slice(1,size).map((name,j)=>({id:j+1,name})).filter(p=>!played.has(p.id));
+ $("playedCount").textContent=played.size+"/"+count();$("remainingCount").textContent=missing.length;
+ $("cycleText").textContent="Ciclo "+cycle+" · O Pé de Chumbo não entra na contagem, pois joga sempre.";
+ $("remainingList").innerHTML=missing.length?missing.map(p=>`<div class="player"><span>${esc(p.name||"Jogador "+(p.id+1))}</span></div>`).join(""):'<div class="player done" style="grid-column:1/-1"><span>Todos já jogaram</span></div>';
+ const n=$("cycleNotice"), prominent=$("lineupCycleNotice");
+ if(!missing.length){
+  n.className="notice good";n.textContent="Ciclo completo. Uma escalação já usada pode ser repetida; essa repetição inicia o próximo ciclo.";
+  prominent.className="notice good";prominent.textContent="✓ TODOS JÁ JOGARAM — CICLO COMPLETO. A repetição de uma escalação está liberada.";
+ } else {
+  n.className="notice warn";n.textContent="Faltam "+missing.length+" jogador(es). Escalações novas são permitidas; uma escalação completa já usada ainda não pode se repetir.";
+  prominent.className="notice warn";prominent.textContent="RODÍZIO EM ANDAMENTO — faltam "+missing.length+" jogador(es) participar antes de liberar a repetição de uma escalação.";
+ }
+}
+function renderHistory(){
+ const host=$("history");
+ host.innerHTML=lineups.length?lineups.map((m,i)=>`<div class="match"><span class="badge">JOGO ${i+1}</span><p>${m.ids.map(id=>esc(names[id]||"Jogador "+(id+1))).join(" · ")}</p></div>`).join(""):'<p class="muted">Nenhuma partida registrada.</p>';
+}
+function register(){
+ const ids=selected(),repeat=lineups.some(m=>key(m.ids)===key(ids));
+ if(ids.length!==5||new Set(ids).size!==5||ids[0]!==0)return validate();
+ if(repeat&&played.size<count())return validate();
+ // Uma repetição só é liberada quando o ciclo já está completo. A partida repetida inaugura o próximo ciclo.
+ if(repeat){played=new Set();lineups=[];cycle++;}
+ lineups.push({ids:ids.slice()});ids.slice(1).forEach(id=>played.add(id));
+ // Clear the next lineup after registration, keeping the mandatory Pé de Chumbo selected.
+ currentSlots=[0,-1,-1,-1,-1];
+ renderProgress();renderHistory();renderLineup();
+}
+$("teamSize").addEventListener("change",e=>{size=Number(e.target.value);played=new Set();lineups=[];cycle=1;currentSlots=[0,1,2,3,4];renderNames();renderLineup();renderProgress();renderHistory();});
+$("registerBtn").addEventListener("click",register);
+$("clearLineupBtn").addEventListener("click",()=>{currentSlots=[0,1,2,3,4];renderLineup();});
+$("newCycleBtn").addEventListener("click",()=>{if(played.size<count()&&!confirm("Ainda faltam jogadores. Iniciar outro ciclo mesmo assim?"))return;played=new Set();lineups=[];cycle++;renderProgress();renderHistory();renderLineup();});
+$("resetBtn").addEventListener("click",()=>{if(!confirm("Zerar todo o histórico?"))return;played=new Set();lineups=[];cycle=1;currentSlots=[0,1,2,3,4];renderProgress();renderHistory();renderLineup();});
+renderNames();renderLineup();renderProgress();renderHistory();
+</script>
+</body>
+</html>
